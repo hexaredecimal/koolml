@@ -1,6 +1,6 @@
 # koolml
 
-## koolml is a meta-lang inspired programming language that compiles to **javascript**
+#### koolml is a meta-lang inspired programming language that compiles to **javascript**
 
 
 ## Features:
