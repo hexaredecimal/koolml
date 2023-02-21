@@ -15,7 +15,7 @@
 - String concat doesn't create a string, but a derived type of string 
 - ```js 
     const x = new String("Hello") + new String("World")
-    if (x instanceof String) { .... } // This results to false (why? please help)
+    if (x instanceof String) { .... } // This results to false (why? why JS! why!!!!)
     ```
 - The above doesn't work when matching a result of string concat
 
