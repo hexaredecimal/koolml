@@ -1,18 +1,13 @@
 
 
 ListClass = '''
+import java.util.*;
 
-class List {
-    constructor(items) {
-        this.buffer = [];
-        for (var item in items) {
-            this.buffer.push(item);
-        }
-    }
+
+class List<T> extends LinkedList {
 }
 
 '''
 
 runner = '''
-new App().main(["app"]);
 '''

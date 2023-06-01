@@ -29,7 +29,7 @@ def interpret_file(path, verbose=False):
         source = interpreter.evaluate(f.read(), verbose=verbose)
         out = f.name
         pos = out.find(".ml")
-        out = out[0:pos] + ".js"
+        out = out[0:pos] + ".java"
         with open(out, "w") as o:
             o.write(includes + coder.ListClass +  source + coder.runner)
 

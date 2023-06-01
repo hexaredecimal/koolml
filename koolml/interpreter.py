@@ -350,9 +350,9 @@ def eval_typed_var(node, env):
             else:
                 _value = eval_expression(node.value, env)
 
-            return "const /*of type: {} */ {} = {};".format(val, _name.value, _value)
+            return "final {} {} = {};".format(val, _name.value, _value)
         else:
-            return "const /*of type: {}(Infered)*/ {};".format(val, _name.value)
+            return "final {} /*(Infered)*/ {};".format(val, _name.value)
 
 def count_args(gen_type, c = 0):
     if len(gen_type.args) > 0:
@@ -388,13 +388,13 @@ def check_type_exists(_type, lexer):
 def eval_module_definition(node, env):
     name = node.name.value
     env.this = name
-    mod = "class %s {" % (name)
+    mod = "// module %s" % (name)
     
     for stmt in node.body:
         ret = eval_statement(stmt, env)
         mod = mod + "\n" + ret 
 
-    mod = mod + "\n}"
+    # mod = mod + "\n}"
 
     return mod
 
@@ -423,12 +423,12 @@ def eval_function_declaration(node, env):
     name = node.name 
     header = ""
     if name == 'main':
-        header = "/*public static void*/ main(args) {"
+        header = "public static void main(String[] args) {"
     else:
         if ret_type:
-            header = 'static /*' + ret_type.name.value+ ' */ ' + name + '('
+            header = 'static ' + ret_type.name.value+ ' ' + name + '('
         else:
-            header = "static /* Object */ " + name + "("
+            header = "static  Object " + name + "("
     
     # e = Environment()
     # e.lexer = env.lexer
@@ -463,7 +463,7 @@ def eval_function_declaration(node, env):
                     # exit(0)
 
             env.set(_name, param)
-            p = "/*" + _type + "*/ " + _name 
+            p = "" + _type + " " + _name 
             if i == length - 1:
                 header = header + p + ") {"
             else:
@@ -574,20 +574,23 @@ def eval_setitem(node, env):
 def eval_array(node, env, head=None):
     items = node.items
 
+    tp = 'Object'
+
     ret = ""
     if head:
-        ret += "new List("
-        ret += "/*of {}; */".format(get_base_type(head))
-
+        ret += "new List"
+        ret += "<{}>(".format(get_base_type(head))
+        tp = get_base_type(head)
     else:
-        ret += "new List( /* of infered object */"
+        ret += "new List(  of infered object "
 
-    ret += '['
+    ret += '%s[] ' % (tp) + '{'
+
     for i in range(0, len(items)) :
         res = eval_expression(items[i], env)
         
         if i == len(items) -1:
-            ret += res + "])"
+            ret += res + "})"
         else:
             ret +=res + ","
     return ret
@@ -663,13 +666,15 @@ def add_builtins(env):
         # 'slice': (['iter', 'start', 'stop'], lambda args, e: list(args['iter'][args['start']:args['stop']])),
         # 'str': (['in'], lambda args, e: str(args['in'])),
         # 'int': (['in'], lambda args, e: int(args['in'])),
-        'print': ast.Builtin('console.log('),
-        'println': ast.Builtin('console.log('), 
-        'readline': ast.Builtin('prompt()'),
-        'readInt': ast.Builtin('ParseInt(prompt())'),
+        'print': ast.Builtin('System.out.print('),
+        'println': ast.Builtin('System.out.println('), 
+        'readline': ast.Builtin('(new Scanner(System.in).nextLine())'),
+        'readInt': ast.Builtin('(new Scanner(System.in).nextInt())'),
         'true': ast.Identifier('true'),
         'false': ast.Identifier('false')
     }
+
+
     for key, param in builtins.items():
         env.set(key, param)
 
